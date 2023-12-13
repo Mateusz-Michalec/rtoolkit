@@ -1,12 +1,19 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
-import postSlice from "../features/posts/postSlice"
+import {
+  configureStore,
+  ThunkAction,
+  Action,
+  getDefaultMiddleware,
+} from "@reduxjs/toolkit"
 import usersSlice from "../features/users/usersSlice"
+import { postsApi } from "../features/api/posts"
 
 export const store = configureStore({
   reducer: {
-    posts: postSlice,
+    [postsApi.reducerPath]: postsApi.reducer,
     users: usersSlice,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(postsApi.middleware),
 })
 
 export type AppDispatch = typeof store.dispatch

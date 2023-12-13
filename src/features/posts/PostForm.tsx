@@ -1,16 +1,13 @@
 import React, { FormEvent, useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import {
-  Post,
-  addNewPost,
-  addPost,
-  deletePost,
-  getPostsStatus,
-  selectPostById,
-  updatePost,
-} from "./postSlice"
+import { useAppSelector } from "../../app/hooks"
 import { selectAllUsers } from "../users/usersSlice"
 import { useNavigate, useParams } from "react-router-dom"
+import {
+  selectPostById,
+  useAddNewPostMutation,
+  useDeletePostMutation,
+  useUpdatePostMutation,
+} from "../api/posts"
 
 type PostFormProps = {
   isEdit?: boolean
@@ -18,13 +15,16 @@ type PostFormProps = {
 
 const PostForm = ({ isEdit }: PostFormProps) => {
   const { postId } = useParams()
+  const [addNewPost, { isLoading }] = useAddNewPostMutation()
+  const [updatePost] = useUpdatePostMutation()
+  const [deletePost] = useDeletePostMutation()
+
   const post = postId
     ? useAppSelector((state) => selectPostById(state, Number(postId)))
     : null
 
   const navigate = useNavigate()
 
-  const dispatch = useAppDispatch()
   const users = useAppSelector(selectAllUsers)
 
   const [title, setTitle] = useState(post?.title || "")
@@ -32,16 +32,13 @@ const PostForm = ({ isEdit }: PostFormProps) => {
   const [userId, setUserId] = useState(post?.userId || 1)
   const [action, setAction] = useState<"add" | "edit" | "delete">("add")
 
-  const disabledFlag = title && body && userId ? false : true
-
-  const onSumbit = (e: FormEvent) => {
+  const onSumbit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      if (post && action === "edit")
-        dispatch(updatePost({ ...post, title, body, userId })).unwrap()
-      else if (post && action === "delete")
-        dispatch(deletePost({ id: post.id })).unwrap()
-      else dispatch(addNewPost({ title, body, userId })).unwrap()
+      if (action === "add") await addNewPost({ title, body, userId }).unwrap()
+      else if (action === "edit" && post)
+        await updatePost({ ...post, title, body, userId }).unwrap()
+      else if (action === "delete") await deletePost(postId).unwrap()
       navigate("/")
     } catch (error) {
       console.log(error)
@@ -82,14 +79,12 @@ const PostForm = ({ isEdit }: PostFormProps) => {
         />
         <button
           onClick={() => (isEdit ? setAction("edit") : setAction("add"))}
-          disabled={disabledFlag}
+          disabled={title && body && userId ? false : true}
         >
           {isEdit ? "Edit Post" : "Save Post"}
         </button>
         {isEdit ? (
-          <button onClick={() => setAction("delete")} disabled={disabledFlag}>
-            Delete Post
-          </button>
+          <button onClick={() => setAction("delete")}>Delete Post</button>
         ) : null}
       </form>
     </section>

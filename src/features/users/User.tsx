@@ -2,26 +2,37 @@ import React from "react"
 import { Link, useParams } from "react-router-dom"
 import { useAppSelector } from "../../app/hooks"
 import { selectUserById } from "./usersSlice"
-import { selectPostsByUser } from "../posts/postSlice"
+import { useGetPostsByUserIdQuery } from "../api/posts"
 
 const User = () => {
   const { userId } = useParams()
+  const {
+    data: userPosts,
+    isLoading,
+    isSuccess,
+    isError,
+  } = useGetPostsByUserIdQuery(userId)
 
   const user = useAppSelector((state) => selectUserById(state, Number(userId)))
-  const userPosts = useAppSelector((state) =>
-    selectPostsByUser(state, Number(userId)),
-  )
 
   return (
     <>
       <h2>{user?.name}</h2>
-      <ol>
-        {userPosts.map((post) => (
-          <li key={post.id}>
-            <Link to={`/post/${post.id}`}>{post.title}</Link>
-          </li>
-        ))}
-      </ol>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : isSuccess ? (
+        <ol>
+          {userPosts.ids.map((postId) => (
+            <li key={postId}>
+              <Link to={`/post/${postId}`}>
+                {userPosts.entities[postId]?.title}
+              </Link>
+            </li>
+          ))}
+        </ol>
+      ) : isError ? (
+        <p>Something went wrong.</p>
+      ) : null}
     </>
   )
 }
