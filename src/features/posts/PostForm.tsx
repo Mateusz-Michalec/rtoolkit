@@ -1,6 +1,5 @@
 import React, { FormEvent, useState } from "react"
 import { useAppSelector } from "../../app/hooks"
-import { selectAllUsers } from "../users/usersSlice"
 import { useNavigate, useParams } from "react-router-dom"
 import {
   selectPostById,
@@ -8,6 +7,7 @@ import {
   useDeletePostMutation,
   useUpdatePostMutation,
 } from "../api/posts"
+import { selectAllUsers } from "../api/users"
 
 type PostFormProps = {
   isEdit?: boolean

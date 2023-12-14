@@ -1,10 +1,10 @@
 import React from "react"
-import { Post, selectPostById } from "./postSlice"
 import PostAuthor from "./PostAuthor"
 import ReactionBtns from "./ReactionBtns"
 import { Link, useNavigate } from "react-router-dom"
 import { useAppSelector } from "../../app/hooks"
 import { EntityId } from "@reduxjs/toolkit"
+import { selectPostById } from "../api/posts"
 
 type PostExcerptProps = {
   postId: EntityId

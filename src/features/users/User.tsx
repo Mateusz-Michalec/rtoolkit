@@ -1,8 +1,8 @@
 import React from "react"
 import { Link, useParams } from "react-router-dom"
 import { useAppSelector } from "../../app/hooks"
-import { selectUserById } from "./usersSlice"
 import { useGetPostsByUserIdQuery } from "../api/posts"
+import { selectUserById } from "../api/users"
 
 const User = () => {
   const { userId } = useParams()

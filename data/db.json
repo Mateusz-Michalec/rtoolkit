@@ -237,7 +237,14 @@
       "title": "qui est esse",
       "body": "hey there",
       "userId": 1,
-      "date": "2022-04-13T23:02:19.248Z"
+      "date": "2022-04-13T23:02:19.248Z",
+      "reactions": {
+        "thumbsUp": 3,
+        "wow": 0,
+        "heart": 1,
+        "rocket": 0,
+        "coffee": 0
+      }
     },
     {
       "id": 3,
@@ -854,6 +861,20 @@
       "body": "check one two three",
       "userId": 2,
       "date": "2022-04-26T23:03:52.299Z"
+    },
+    {
+      "title": "title",
+      "body": "a",
+      "userId": 1,
+      "timestamp": 1702550902373,
+      "reactions": {
+        "thumbsUp": 0,
+        "wow": 0,
+        "heart": 0,
+        "rocket": 0,
+        "coffee": 0
+      },
+      "id": 103
     }
   ]
 }

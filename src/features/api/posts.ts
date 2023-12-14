@@ -42,7 +42,7 @@ const transformPosts = (response: Post[]) => {
 
 export const postsApi = createApi({
   reducerPath: "postsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3500" }),
   tagTypes: ["Posts"],
   endpoints: (builder) => ({
     getPosts: builder.query<EntityState<Post>, void>({
@@ -66,7 +66,7 @@ export const postsApi = createApi({
     }),
     addNewPost: builder.mutation({
       query: (post: PostPick) => ({
-        url: `/post`,
+        url: `/posts`,
         method: "POST",
         body: {
           ...post,
@@ -103,6 +103,31 @@ export const postsApi = createApi({
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Posts", id: arg }],
     }),
+    addReaction: builder.mutation({
+      query: ({ postId, reactions }) => ({
+        url: `posts/${postId}`,
+        method: "PATCH",
+        body: { reactions },
+      }),
+      async onQueryStarted(
+        { postId, reactions },
+        { dispatch, queryFulfilled },
+      ) {
+        // updateQueryData requires the endpoint name and cache key arguments
+        // so it knows wchich piece of cache to update
+        const result = dispatch(
+          postsApi.util.updateQueryData("getPosts", undefined, (draft) => {
+            const post = draft.entities[postId]
+            if (post) post.reactions = reactions
+          }),
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          result.undo()
+        }
+      },
+    }),
   }),
 })
 
@@ -114,17 +139,18 @@ const selectPostsData = createSelector(
 )
 
 export const {
-  useGetPostsQuery,
-  useGetPostsByUserIdQuery,
-  useAddNewPostMutation,
-  useUpdatePostMutation,
-  useDeletePostMutation,
-} = postsApi
-
-export const {
   selectAll: selectAllPosts,
   selectById: selectPostById,
   selectIds: selectPostsId,
 } = postsAdapter.getSelectors(
   (state: RootState) => selectPostsData(state) ?? initialState,
 )
+
+export const {
+  useGetPostsQuery,
+  useGetPostsByUserIdQuery,
+  useAddNewPostMutation,
+  useAddReactionMutation,
+  useUpdatePostMutation,
+  useDeletePostMutation,
+} = postsApi

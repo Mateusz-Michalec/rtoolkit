@@ -4,12 +4,12 @@ import { Provider } from "react-redux"
 import { store } from "./app/store"
 import App from "./App"
 import "./index.css"
-import { fetchUsers } from "./features/users/usersSlice"
 import { BrowserRouter } from "react-router-dom"
-import { postsApi } from "./features/posts/postSlice"
+import { postsApi } from "./features/api/posts"
+import { usersApi } from "./features/api/users"
 
 store.dispatch(postsApi.endpoints.getPosts.initiate())
-store.dispatch(fetchUsers())
+store.dispatch(usersApi.endpoints.getUsers.initiate())
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>

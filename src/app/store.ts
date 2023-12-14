@@ -4,16 +4,18 @@ import {
   Action,
   getDefaultMiddleware,
 } from "@reduxjs/toolkit"
-import usersSlice from "../features/users/usersSlice"
 import { postsApi } from "../features/api/posts"
+import { usersApi } from "../features/api/users"
 
 export const store = configureStore({
   reducer: {
     [postsApi.reducerPath]: postsApi.reducer,
-    users: usersSlice,
+    [usersApi.reducerPath]: usersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(postsApi.middleware),
+    getDefaultMiddleware()
+      .concat(postsApi.middleware)
+      .concat(usersApi.middleware),
 })
 
 export type AppDispatch = typeof store.dispatch

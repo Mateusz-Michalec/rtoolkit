@@ -1,6 +1,6 @@
 import React from "react"
 import { useAppDispatch } from "../../app/hooks"
-import { addReaction } from "./postSlice"
+import { useAddReactionMutation } from "../api/posts"
 
 const reactionEmoji = {
   thumbsUp: "👍",
@@ -16,7 +16,7 @@ type ReactionBtnsProps = {
 }
 
 const ReactionBtns = ({ postId, reactions }: ReactionBtnsProps) => {
-  const dispatch = useAppDispatch()
+  const [addReaction] = useAddReactionMutation()
 
   return (
     <div>
@@ -26,7 +26,10 @@ const ReactionBtns = ({ postId, reactions }: ReactionBtnsProps) => {
           type="button"
           className="reactionButton"
           onClick={() =>
-            dispatch(addReaction({ postId: postId, reaction: reaction }))
+            addReaction({
+              postId: postId,
+              reactions: { ...reactions, [reaction]: reactions[reaction] + 1 },
+            })
           }
         >
           {emoji} {reactions[reaction]}
